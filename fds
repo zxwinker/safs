@@ -6,7 +6,10 @@ def auditsite(self):
         response = requests.get(self.url)
         if response.status_code == 200:
             self.soup = BeautifulSoup(response.text, 'html.parser')
-    
+        else:
+            print("Не вдалося підключитися до сайту Minfin.")
+    except Exception as e:
+        print(f"Помилка при з'єднанні: {e}")
 
 def getInfo(self):
     valute = []
@@ -81,16 +84,5 @@ if action not in ['1', '2']:
     return
 
 currency_choice = int(input("\nВиберіть валюту (введіть номер зі списку):\n> "))
-if currency_choice < 1 or currency_choice > len(currencies):
-    print("Некоректний вибір валюти.")
-    return
-
-amount = float(input("\nВведіть суму у гривнях: > "))
-
-selected_currency = currencies[currency_choice - 1]
-rate = float(selected_currency['Продаж'].replace(',', '.')) if action == '1' else float(selected_currency['Купівля'].replace(',', '.'))
-operation = "купити" if action == '1' else "продати"
-result = amount / rate
-
 print(f"\nВи хочете {operation} {selected_currency['Назва']} на {amount} грн.")
 print(f"Ви отримаєте: {result:.2f} {selected_currency['Назва']} за курсом {rate} грн.")
