@@ -1,0 +1,96 @@
+class Minfin: 
+def init(self): self.url = 'https://minfin.com.ua/ua/currency/' self.soup = None
+
+def auditsite(self):
+    try:
+        response = requests.get(self.url)
+        if response.status_code == 200:
+            self.soup = BeautifulSoup(response.text, 'html.parser')
+    
+
+def getInfo(self):
+    valute = []
+    valuteTag = self.soup.findall('tr', class='sc-1x32wa2-4 dKDSW')[1:6]
+    if not valuteTag:
+        print("Не вдалося знайти необхідний тег/атрибут")
+        return valute
+
+    for i in valuteTag:
+        nameValute = i.find('a', class_='sc-1x32wa2-7 ciclTw')
+        name = nameValute.text.strip() if nameValute else "Назва валюти відсутня"
+
+        valuteData = i.find_all('td')
+        buy = 'Курс купівлі відсутній'
+        sell = 'Курс продажу відсутній'
+
+        if len(valuteData) > 2:
+            buy = valuteData[0].text.strip()
+            sell = valuteData[1].text.strip()
+
+        valute.append({
+            "Назва": name,
+            "Купівля": buy,
+            "Продаж": sell
+        })
+    return valute
+
+def main(): parser = Minfin() parser.auditsite() currencies = parser.getInfo()
+
+if not currencies:
+    print("Не вдалося отримати курси валют.")
+    return
+
+print("Отримані курси валют:")
+for idx, currency in enumerate(currencies, 1):
+    print(f"{idx}. {currency['Назва']}: Купівля {currency['Купівля']} грн, Продаж {currency['Продаж']} грн")
+
+action = input("\nВиберіть дію:\n1 Купити\n2 Продати\n> ")
+
+if action not in ['1', '2']:
+    print("Некоректний вибір дії.")
+    return
+valuteData = i.find_all('td')
+        buy = 'Курс купівлі відсутній'
+        sell = 'Курс продажу відсутній'
+
+        if len(valuteData) > 2:
+            buy = valuteData[0].text.strip()
+            sell = valuteData[1].text.strip()
+
+        valute.append({
+            "Назва": name,
+            "Купівля": buy,
+            "Продаж": sell
+        })
+    return valute
+
+def main(): parser = Minfin() parser.auditsite() currencies = parser.getInfo()
+
+if not currencies:
+    print("Не вдалося отримати курси валют.")
+    return
+
+print("Отримані курси валют:")
+for idx, currency in enumerate(currencies, 1):
+    print(f"{idx}. {currency['Назва']}: Купівля {currency['Купівля']} грн, Продаж {currency['Продаж']} грн")
+
+action = input("\nВиберіть дію:\n1 Купити\n2 Продати\n> ")
+
+if action not in ['1', '2']:
+    print("Некоректний вибір дії.")
+    return
+
+currency_choice = int(input("\nВиберіть валюту (введіть номер зі списку):\n> "))
+if currency_choice < 1 or currency_choice > len(currencies):
+    print("Некоректний вибір валюти.")
+    return
+
+amount = float(input("\nВведіть суму у гривнях: > "))
+
+selected_currency = currencies[currency_choice - 1]
+rate = float(selected_currency['Продаж'].replace(',', '.')) if action == '1' else float(selected_currency['Купівля'].replace(',', '.'))
+operation = "купити" if action == '1' else "продати"
+result = amount / rate
+
+print(f"\nВи хочете {operation} {selected_currency['Назва']} на {amount} грн.")
+print(f"Ви отримаєте: {result:.2f} {selected_currency['Назва']} за курсом {rate} грн.")
