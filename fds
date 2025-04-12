@@ -6,11 +6,7 @@ def auditsite(self):
         response = requests.get(self.url)
         if response.status_code == 200:
             self.soup = BeautifulSoup(response.text, 'html.parser')
-        else:
-            print("Не вдалося підключитися до сайту Minfin.")
-    except Exception as e:
-        print(f"Помилка при з'єднанні: {e}")
-
+      
 def getInfo(self):
     valute = []
     valuteTag = self.soup.findall('tr', class='sc-1x32wa2-4 dKDSW')[1:6]
